@@ -19,7 +19,7 @@ Requires: libxml2-legacy-python
 BuildRequires : pkgconfig(icu-i18n)
 BuildRequires : pkgconfig(liblzma)
 BuildRequires : pkgconfig(zlib)
-BuildRequires : python-dev
+
 
 %description
 XML toolkit from the GNOME project
