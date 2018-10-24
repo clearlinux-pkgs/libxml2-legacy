@@ -4,7 +4,7 @@
 #
 Name     : libxml2-legacy
 Version  : 2.9.7
-Release  : 7
+Release  : 8
 URL      : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Source0  : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Summary  : libXML library version2.
