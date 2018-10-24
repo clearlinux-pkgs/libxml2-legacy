@@ -4,7 +4,7 @@
 #
 Name     : libxml2-legacy
 Version  : 2.9.7
-Release  : 9
+Release  : 11
 URL      : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Source0  : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Summary  : libXML library version2.
@@ -15,11 +15,11 @@ Requires: libxml2-legacy-lib = %{version}-%{release}
 Requires: libxml2-legacy-license = %{version}-%{release}
 Requires: libxml2-legacy-man = %{version}-%{release}
 Requires: libxml2-legacy-python = %{version}-%{release}
-Requires: libxml2-legacy-python3 = %{version}-%{release}
 BuildRequires : buildreq-gnome
 BuildRequires : pkgconfig(icu-i18n)
 BuildRequires : pkgconfig(liblzma)
 BuildRequires : pkgconfig(zlib)
+BuildRequires : python-core
 BuildRequires : python-dev
 BuildRequires : python3-dev
 
@@ -58,6 +58,15 @@ Requires: libxml2-legacy-man = %{version}-%{release}
 doc components for the libxml2-legacy package.
 
 
+%package legacypython
+Summary: legacypython components for the libxml2-legacy package.
+Group: Default
+Requires: python-core
+
+%description legacypython
+legacypython components for the libxml2-legacy package.
+
+
 %package lib
 Summary: lib components for the libxml2-legacy package.
 Group: Libraries
@@ -86,19 +95,9 @@ man components for the libxml2-legacy package.
 %package python
 Summary: python components for the libxml2-legacy package.
 Group: Default
-Requires: libxml2-legacy-python3 = %{version}-%{release}
 
 %description python
 python components for the libxml2-legacy package.
-
-
-%package python3
-Summary: python3 components for the libxml2-legacy package.
-Group: Default
-Requires: python3-core
-
-%description python3
-python3 components for the libxml2-legacy package.
 
 
 %prep
@@ -109,12 +108,12 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1540413639
+export SOURCE_DATE_EPOCH=1540414128
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
-%autogen --disable-static PYTHON=/usr/bin/python2
+%autogen --disable-static --with-python=/usr/bin/python2
 make  %{?_smp_mflags}
 
 %check
@@ -125,7 +124,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1540413639
+export SOURCE_DATE_EPOCH=1540414128
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libxml2-legacy
 cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
@@ -463,6 +462,10 @@ cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
 %exclude /usr/share/gtk-doc/html/libxml2/style.css
 %exclude /usr/share/gtk-doc/html/libxml2/up.png
 
+%files legacypython
+%defattr(-,root,root,-)
+/usr/lib/python2*/*
+
 %files lib
 %defattr(-,root,root,-)
 %exclude /usr/lib64/libxml2.so.2
@@ -480,7 +483,3 @@ cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
 
 %files python
 %defattr(-,root,root,-)
-
-%files python3
-%defattr(-,root,root,-)
-/usr/lib/python3*/*
