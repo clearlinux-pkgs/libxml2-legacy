@@ -4,14 +4,13 @@
 #
 Name     : libxml2-legacy
 Version  : 2.9.7
-Release  : 12
+Release  : 13
 URL      : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Source0  : https://git.gnome.org/browse/libxml2/snapshot/libxml2-2.9.7.tar.xz
 Summary  : libXML library version2.
 Group    : Development/Tools
 License  : MIT
 Requires: libxml2-legacy-bin = %{version}-%{release}
-Requires: libxml2-legacy-lib = %{version}-%{release}
 Requires: libxml2-legacy-license = %{version}-%{release}
 Requires: libxml2-legacy-man = %{version}-%{release}
 Requires: libxml2-legacy-python = %{version}-%{release}
@@ -24,15 +23,20 @@ BuildRequires : python-dev
 BuildRequires : python3-dev
 
 %description
-XML toolkit from the GNOME project
-Full documentation is available on-line at
-http://xmlsoft.org/
+IBM OS/400 implements iconv in an odd way:
+- Type iconv_t is a structure: therefore objects of this type cannot be
+compared to (iconv_t) -1.
+- Supported character sets names are all of the form IBMCCSIDccsid..., where
+ccsid is a decimal 5-digit integer identifying an IBM coded character set.
+In addition, character set names have to be given in EBCDIC.
+Standard character set names like "UTF-8" are NOT recognized.
+- The prototype of iconv_open() does not declare parameters as const, although
+they are not altered.
 
 %package bin
 Summary: bin components for the libxml2-legacy package.
 Group: Binaries
 Requires: libxml2-legacy-license = %{version}-%{release}
-Requires: libxml2-legacy-man = %{version}-%{release}
 
 %description bin
 bin components for the libxml2-legacy package.
@@ -41,9 +45,9 @@ bin components for the libxml2-legacy package.
 %package dev
 Summary: dev components for the libxml2-legacy package.
 Group: Development
-Requires: libxml2-legacy-lib = %{version}-%{release}
 Requires: libxml2-legacy-bin = %{version}-%{release}
 Provides: libxml2-legacy-devel = %{version}-%{release}
+Requires: libxml2-legacy = %{version}-%{release}
 
 %description dev
 dev components for the libxml2-legacy package.
@@ -65,15 +69,6 @@ Requires: python-core
 
 %description legacypython
 legacypython components for the libxml2-legacy package.
-
-
-%package lib
-Summary: lib components for the libxml2-legacy package.
-Group: Libraries
-Requires: libxml2-legacy-license = %{version}-%{release}
-
-%description lib
-lib components for the libxml2-legacy package.
 
 
 %package license
@@ -108,7 +103,8 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1540414128
+export SOURCE_DATE_EPOCH=1552190109
+export LDFLAGS="${LDFLAGS} -fno-lto"
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -124,11 +120,14 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1540414128
+export SOURCE_DATE_EPOCH=1552190109
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libxml2-legacy
 cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
 %make_install
+## install_append content
+rm -rf %{buildroot}/usr/lib64/*.so*
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -190,7 +189,6 @@ cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
 %exclude /usr/include/libxml2/libxml/xpathInternals.h
 %exclude /usr/include/libxml2/libxml/xpointer.h
 %exclude /usr/lib64/cmake/libxml2/libxml2-config.cmake
-%exclude /usr/lib64/libxml2.so
 %exclude /usr/lib64/pkgconfig/libxml-2.0.pc
 %exclude /usr/share/aclocal/libxml.m4
 %exclude /usr/share/man/man3/libxml.3
@@ -465,11 +463,6 @@ cp Copyright %{buildroot}/usr/share/package-licenses/libxml2-legacy/Copyright
 %files legacypython
 %defattr(-,root,root,-)
 /usr/lib/python2*/*
-
-%files lib
-%defattr(-,root,root,-)
-%exclude /usr/lib64/libxml2.so.2
-%exclude /usr/lib64/libxml2.so.2.9.7
 
 %files license
 %defattr(0644,root,root,0755)
